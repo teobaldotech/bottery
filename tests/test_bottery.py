@@ -1,3 +1,4 @@
+
 import asyncio
 from unittest import mock
 
@@ -7,76 +8,75 @@ import pytest
 from bottery import Bottery
 
 
-class FakeSettings:
-    PLATFORM = {}
-
-
 @pytest.fixture
 def bot():
-    bot = Bottery()
-    yield bot
-    bot.stop()
+    """Cria uma instância isolada de Bottery e encerra seus recursos."""
+    instance = Bottery()
 
-
-@pytest.fixture
-def engine():
-    class FakeEngine:
-        def __init__(self):
-            self.tasks = []
-
-        async def configure(self):
-            self.tasks.append("fake_task")
-
-    return FakeEngine()
+    try:
+        yield instance
+    finally:
+        instance.stop()
 
 
 @pytest.mark.parametrize(
-    "attribute,instance_type",
+    ("attribute", "instance_type"),
     [
         ("loop", asyncio.AbstractEventLoop),
         ("session", aiohttp.ClientSession),
     ],
 )
 def test_default_properties(bot, attribute, instance_type):
-    assert isinstance(getattr(bot, attribute), instance_type)
+    """Verifica os tipos das propriedades padrão."""
+    value = getattr(bot, attribute)
+
+    assert isinstance(value, instance_type)
 
 
 @pytest.mark.parametrize("attribute", ["loop", "session"])
-def test_already_defined_properties(attribute):
-    bot = Bottery()
+def test_already_defined_properties(bot, attribute):
+    """Verifica se propriedades previamente definidas são preservadas."""
+    expected = f"fake_{attribute}"
 
-    setattr(bot, f"_{attribute}", attribute)
+    setattr(bot, f"_{attribute}", expected)
 
-    assert getattr(bot, attribute) == attribute
+    assert getattr(bot, attribute) == expected
 
 
 @pytest.mark.asyncio
 async def test_configure_no_platforms_found(bot):
+    """Verifica o comportamento quando não há plataformas configuradas."""
     with pytest.raises(Exception):
         await bot.configure()
 
 
-@pytest.mark.skip(reason="Implementação pendente")
-@pytest.mark.asyncio
-async def test_configure_no_platform_engine_found(bot):
-    bot.settings.PLATFORMS["fake_engine"] = {
-        "ENGINE": "module.fake_engine"
-    }
-
-    assert not bot.tasks
-
-
 @mock.patch("bottery.bottery.importlib.import_module")
-def test_bottery_import_msghandlers(mock_import_module):
+def test_bottery_import_msghandlers(mock_import_module, monkeypatch):
+    """Verifica a importação dos manipuladores de mensagens."""
     from bottery.conf import settings
 
-    settings.configure(ROOT_MSGCONF="another_handlers")
+    expected_handlers = ["handlers"]
+    mock_module = mock.Mock()
+    mock_module.msghandlers = expected_handlers
 
-    expected_return = ["handlers"]
-    mock_import_module.return_value.msghandlers = expected_return
+    mock_import_module.return_value = mock_module
+
+    monkeypatch.setattr(
+        settings,
+        "ROOT_MSGCONF",
+        "another_handlers",
+        raising=False,
+    )
 
     bottery = Bottery()
 
-    assert bottery.import_msghandlers() == expected_return
+    try:
+        result = bottery.import_msghandlers()
 
-    mock_import_module.assert_called_once_with("another_handlers")
+        assert result == expected_handlers
+
+        mock_import_module.assert_called_once_with(
+            "another_handlers"
+        )
+    finally:
+        bottery.stop()
