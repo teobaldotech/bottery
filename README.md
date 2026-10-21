@@ -1,38 +1,62 @@
-# bottery
-:battery: A framework for building bots
+# 🔋 Bottery
+
+**A framework for building bots.**
 
 [![Build Status](https://travis-ci.org/rougeth/bottery.svg?branch=master)](https://travis-ci.org/rougeth/bottery)
-[![Build status](https://ci.appveyor.com/api/projects/status/we3h64nj98vvxcre/branch/master?svg=true)](https://ci.appveyor.com/project/rougeth/bottery/branch/master)
-[![PyPI](https://img.shields.io/pypi/v/bottery.svg)](https://pypi.python.org/pypi/bottery)
-[![Versions](https://img.shields.io/pypi/pyversions/bottery.svg)](https://pypi.python.org/pypi/bottery)
+[![Build Status](https://ci.appveyor.com/api/projects/status/we3h64nj98vvxcre/branch/master?svg=true)](https://ci.appveyor.com/project/rougeth/bottery/branch/master)
+[![PyPI Version](https://img.shields.io/pypi/v/bottery.svg)](https://pypi.org/project/bottery/)
+[![Python Versions](https://img.shields.io/pypi/pyversions/bottery.svg)](https://pypi.org/project/bottery/)
 
-* [Usage](#usage)
-  * [Documentation](http://docs.bottery.io)
-  * [Installing](#installing)
-  * [Creating a project](#creating-a-project)
-  * [Running](#running)
-* [Development](#development)
+Bottery is a Python framework for building bots.
 
-A complete example can be seen [here](https://github.com/leportella/bottery-examples).
+## 📚 Table of Contents
 
+- [Usage](#usage)
+  - [Installing](#installing)
+  - [Creating a Project](#creating-a-project)
+  - [Running](#running)
+- [Documentation](#documentation)
+- [Examples](#examples)
+- [Development](#development)
 
-## Usage
+## 🚀 Usage
 
 ### Installing
+
+Install Bottery using `pip`:
+
 ```bash
-$ pip install bottery
+pip install bottery
 ```
 
-### Creating a project
+### Creating a Project
+
+Create a new project using the Bottery command-line interface:
+
 ```bash
-$ bottery startproject librarybot
+bottery startproject librarybot
 ```
 
 ### Running
+
+Start the bot from your project directory:
+
 ```bash
-$ bottery run
+bottery run
 ```
 
-## Development
+## 📖 Documentation
 
-Please see [our contribution guide](CONTRIBUTING.rst).
+For more information, visit the [Bottery documentation](http://docs.bottery.io).
+
+## 💡 Examples
+
+Explore the [Bottery Examples repository](https://github.com/leportella/bottery-examples) for a complete project example.
+
+## 🛠️ Development
+
+Before contributing, please read our [Contribution Guide](CONTRIBUTING.rst).
+
+---
+
+Made with 🐍 Python.
