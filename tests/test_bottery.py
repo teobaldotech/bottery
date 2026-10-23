@@ -1,4 +1,3 @@
-
 import asyncio
 from unittest import mock
 
@@ -6,6 +5,7 @@ import aiohttp
 import pytest
 
 from bottery import Bottery
+from bottery.conf import settings  # Importação movida para o topo do arquivo
 
 
 @pytest.fixture
@@ -46,15 +46,25 @@ def test_already_defined_properties(bot, attribute):
 @pytest.mark.asyncio
 async def test_configure_no_platforms_found(bot):
     """Verifica o comportamento quando não há plataformas configuradas."""
+    # Dica: Substitua 'Exception' por uma exceção específica do Bottery,
+    # se o framework fornecer uma (ex: ConfigurationError, BotteryError).
     with pytest.raises(Exception):
         await bot.configure()
+
+
+@pytest.mark.asyncio
+async def test_bottery_stop(bot):
+    """Verifica se o método stop encerra a sessão corretamente."""
+    session = bot.session
+    bot.stop()
+    
+    # Garante que a sessão do aiohttp foi devidamente fechada
+    assert session.closed
 
 
 @mock.patch("bottery.bottery.importlib.import_module")
 def test_bottery_import_msghandlers(mock_import_module, monkeypatch):
     """Verifica a importação dos manipuladores de mensagens."""
-    from bottery.conf import settings
-
     expected_handlers = ["handlers"]
     mock_module = mock.Mock()
     mock_module.msghandlers = expected_handlers
